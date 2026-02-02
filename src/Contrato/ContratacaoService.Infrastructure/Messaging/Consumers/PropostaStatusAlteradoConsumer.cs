@@ -1,15 +1,23 @@
-﻿using MassTransit;
+﻿using ContratacaoService.Application.UseCases.CriarContratacao;
+using MassTransit;
+using MediatR;
 using Shared.Contracts;
+using System;
 
 namespace ContratacaoService.Infrastructure.Messaging.Consumers;
 
 public sealed class PropostaStatusAlteradoConsumer : IConsumer<PropostaStatusAlterado>
 {
-    public Task Consume(ConsumeContext<PropostaStatusAlterado> context)
-    {
-        Console.WriteLine(
-            $"[ContratacaoService] Evento recebido: PropostaId={context.Message.PropostaId} NovoStatus={context.Message.NovoStatus} Data={context.Message.OccurredAtUtc:o}");
+    private readonly IMediator _mediator;
 
-        return Task.CompletedTask;
+    public PropostaStatusAlteradoConsumer(IMediator mediator)
+        => _mediator = mediator;
+
+    public async Task Consume(ConsumeContext<PropostaStatusAlterado> context)
+    {
+        if (context.Message.NovoStatus != 1)
+            return;
+
+        await _mediator.Send(new CriarContratacaoCommand(context.Message.PropostaId), context.CancellationToken);
     }
 }

@@ -2,6 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ContratacaoService.Infrastructure.Messaging.Consumers;
+using ContratacaoService.Application.Ports;
+using ContratacaoService.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace ContratacaoService.Infrastructure;
 
@@ -9,6 +13,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        var cs = configuration.GetConnectionString("Postgres")!;
+
+        services.AddDbContext<ContratacaoDbContext>(opt =>
+            opt.UseNpgsql(cs));
+
+        services.AddScoped<IContratacaoRepository, ContratacaoRepository>();
+
+
         services.AddMassTransit(x =>
         {
             x.AddConsumer<PropostaStatusAlteradoConsumer>();
