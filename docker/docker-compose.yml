@@ -35,8 +35,55 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_ERLANG_COOKIE: "testeindt_cookie_123"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 5s
       timeout: 3s
       retries: 20
+
+  proposta-api:
+    build:
+      context: ..
+      dockerfile: src/Proposta/PropostaService.Api/Dockerfile
+    container_name: proposta-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=proposta-db;Port=5432;Database=proposta_db;Username=proposta;Password=proposta"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__User: guest
+      RabbitMQ__Pass: guest
+    ports:
+      - "8081:8080"
+    depends_on:
+      proposta-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  contratacao-api:
+    build:
+      context: ..
+      dockerfile: src/Contrato/ContratacaoService.Api/Dockerfile
+    container_name: contratacao-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=contratacao-db;Port=5432;Database=contratacao_db;Username=contratacao;Password=contratacao"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__User: guest
+      RabbitMQ__Pass: guest
+    ports:
+      - "8082:8080"
+    depends_on:
+      contratacao-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  rabbitmq_data:
