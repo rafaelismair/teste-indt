@@ -9,12 +9,12 @@ Projeto pensado para **avaliação técnica**, com foco em arquitetura, organiza
 ## 🧩 Visão Geral da Arquitetura
 
 ```
-┌─────────────────────┐        Evento (RabbitMQ)        ┌────────────────────────┐
-│   PropostaService   │ ─────────────────────────────▶ │  ContratacaoService    │
+┌─────────────────────┐        Evento (RabbitMQ)        ┌───────────────────────┐
+│   PropostaService   │ ─────────────────────────────▶ │  ContratacaoService   |
 │                     │                                │                        │
-│ - Criar proposta    │                                │ - Contratar proposta   │
+│ - Criar proposta    │                                │ - Consumir Evento      │
 │ - Listar propostas  │                                │ - Persistir contrato   │
-│ - Alterar status    │                                │                        │
+│ - Alterar status    │                                │ - Consultar Contratos  │
 └─────────┬───────────┘                                └─────────┬──────────────┘
           │                                                        │
           ▼                                                        ▼
