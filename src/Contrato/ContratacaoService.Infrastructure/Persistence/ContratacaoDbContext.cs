@@ -20,8 +20,12 @@ public sealed class ContratacaoDbContext : DbContext
             entity.Property(x => x.PropostaId)
                   .IsRequired();
 
+            entity.Property(x => x.DataContratacaoUtc)
+                .IsRequired();
+
             entity.HasIndex(x => x.PropostaId)
                   .IsUnique();
+
         });
     }
 }
