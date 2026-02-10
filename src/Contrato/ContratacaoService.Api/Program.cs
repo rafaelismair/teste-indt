@@ -1,6 +1,8 @@
 using ContratacaoService.Application;
+using ContratacaoService.Application.Ports;
 using ContratacaoService.Application.UseCases.CriarContratacao;
 using ContratacaoService.Infrastructure;
+using ContratacaoService.Infrastructure.Repositories;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IContratacaoReadRepository, ContratacaoReadRepository>();
+
 
 var app = builder.Build();
 
